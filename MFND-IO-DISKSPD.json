@@ -1,0 +1,49 @@
+{
+    "Description": "DiskSpd I/O Stress Performance Workload",
+    "Metadata": {
+        "RecommendedMinimumExecutionTime": "00:05:00",
+        "SupportedPlatforms": "win-x64,win-arm64",
+        "SupportedOperatingSystems": "Windows"
+    },
+    "Parameters": {
+        "DiskFillSize": "500G",
+        "FileSize": "496G",
+        "DiskFilter": "BiggestSize"
+    },
+    "Actions": [
+        {
+            "Type": "DiskSpdExecutor",
+            "Parameters": {
+                "Scenario": "RandomRead_4k_BlockSize",
+                "PackageName": "diskspd",
+                "DiskFilter": "$.Parameters.DiskFilter",
+                "CommandLine": "-c[filesize] -b4K -r4K -t[threads] -o[queuedepth] -w0 -d300 -Suw -W15 -D -L -Rtext",
+                "TestName": "diskspd_randread_[filesize]_4k_d[queuedepth]_th[threads]",
+                "FileSize": "$.Parameters.FileSize",
+                "FileName": "diskspd-test.dat",
+                "Configuration": "Stress",
+                "ProcessModel": "SingleProcess",
+                "DeleteTestFilesOnFinish": false,
+                "Tags": "IO,DiskSpd,randread"
+            }
+        }
+    ],
+    "Dependencies": [
+        {
+            "Type": "FormatDisks",
+            "Parameters": {
+                "Scenario": "InitializeDisks"
+            }
+        },
+        {
+            "Type": "DependencyPackageInstallation",
+            "Parameters": {
+                "Scenario": "InstallDiskSpdWorkloadPackage",
+                "BlobContainer": "packages",
+                "BlobName": "diskspd.2.0.21.zip",
+                "PackageName": "diskspd",
+                "Extract": true
+            }
+        }
+    ]
+}
